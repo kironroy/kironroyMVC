@@ -23,12 +23,27 @@ namespace KironRoyMVC
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+           
             services.AddControllersWithViews();
+            services.AddRazorPages().AddRazorPagesOptions(options =>
+            {
+                options.Conventions.AuthorizePage("/MessageWall");
+                options.Conventions.AuthorizePage("/MessageWall/Create");
+                options.Conventions.AuthorizePage("/LearningResources/Delete");
+                options.Conventions.AuthorizePage("/ResourceLists/Create");
+                options.Conventions.AuthorizePage("/ResourceLists/Edit");
+                options.Conventions.AuthorizePage("/ResourceLists/Delete");
+                options.Conventions.AllowAnonymousToPage("/Index");
+            });
         }
+
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseRouting();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -41,6 +56,7 @@ namespace KironRoyMVC
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseAuthentication();
 
             app.UseRouting();
 
@@ -48,9 +64,10 @@ namespace KironRoyMVC
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapRazorPages();
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}"); 
             });
         }
     }
